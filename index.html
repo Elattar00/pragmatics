@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pragmatics</title>
+    <title>Pragmatics | Elattar</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -828,12 +828,12 @@
                                         question="1. Discuss the role of presupposition in pragmatics, illustrating how it affects the interpretation of meaning. Provide examples."
                                         answer={
                                             <span>
-                                                <strong>Definition:</strong> Presupposition refers to the background assumptions that a speaker takes for granted when making an utterance. It is information assumed to be true by both speaker and listener.<br/><br/>
-                                                <strong>Role & Effect:</strong> Its primary role is efficiency in communication. It allows speakers to convey information without explicitly asserting it. Crucially, presupposition <strong>survives negation</strong> (The "Constancy under Negation" test). If the presupposition is false, communication may suffer "Presupposition Failure".<br/><br/>
+                                                <strong>Definition:</strong> Presupposition is basically the background information that a speaker assumes is already known by the listener. It is what we take for granted before we even speak.<br/><br/>
+                                                <strong>Role & Effect:</strong> Its main role is to make communication efficient—we don't have to explain everything from scratch every time we speak. The most important technical test for it is <strong>Constancy under Negation</strong>. This means even if you say the sentence is false (negate it), the presupposition remains true. If the presupposition is wrong, communication fails (Presupposition Failure).<br/><br/>
                                                 <strong>Examples:</strong>
                                                 <ul className="list-disc pl-5 mt-2 space-y-1">
-                                                    <li><em>Existential:</em> "The King of France is bald." (Presupposes a King exists).</li>
-                                                    <li><em>Factive:</em> "She realized the door was open." (Presupposes the door was open).</li>
+                                                    <li><em>Existential:</em> "The King of France is bald." (Presupposes that a King exists).</li>
+                                                    <li><em>Factive:</em> "She realized the door was open." (Presupposes that the door was actually open).</li>
                                                 </ul>
                                             </span>
                                         }
@@ -845,14 +845,14 @@
                                         question="2. What is meant by Linguistic Entailments? Provide examples."
                                         answer={
                                             <span>
-                                                <strong>Definition:</strong> Linguistic Entailment is a logical relationship between two sentences where the truth of the first sentence guarantees the truth of the second. Unlike presupposition, entailment is purely logical and does <strong>not</strong> survive negation.<br/><br/>
+                                                <strong>Definition:</strong> Linguistic Entailment is a purely logical connection between two sentences. If Sentence A is true, then Sentence B <strong>must</strong> be true. Unlike presupposition, this connection is purely logical and does <strong>not</strong> survive negation.<br/><br/>
                                                 <strong>Examples:</strong>
                                                 <ul className="list-disc pl-5 mt-2 space-y-1">
-                                                    <li><strong>Statement A:</strong> "Ali killed the snake."</li>
-                                                    <li><strong>Statement B:</strong> "The snake is dead."</li>
+                                                    <li><strong>Sentence A:</strong> "Ali killed the snake."</li>
+                                                    <li><strong>Sentence B:</strong> "The snake is dead."</li>
                                                 </ul>
                                                 <br/>
-                                                If A is true, B must be true (Killing entails death). However, if we negate A ("Ali did NOT kill the snake"), B is not necessarily true (The snake might still be alive).
+                                                Logically, if Ali killed it, it must be dead. However, if we negate A ("Ali did NOT kill the snake"), B is not necessarily true (the snake might still be alive).
                                             </span>
                                         }
                                     />
@@ -863,12 +863,12 @@
                                         question="3. In Pragmatics, context plays a crucial rule in interpreting an utterance; discuss this statement and support your answer with examples."
                                         answer={
                                             <span>
-                                                <strong>Discussion:</strong> This statement defines the core of Pragmatics. While Semantics looks at literal meaning, Pragmatics interprets "intended meaning", which is impossible without context. Context resolves ambiguity, assigns reference, and determines the force of speech acts.<br/><br/>
-                                                <strong>Examples:</strong>
-                                                <ul className="list-disc pl-5 mt-2 space-y-1">
-                                                    <li><strong>Physical Context:</strong> "Bring that here." cannot be understood without seeing where "here" is.</li>
-                                                    <li><strong>Social Context:</strong> A mother saying "Nana is here" to her son changes from a simple statement to a warning because of the social context (Nana dislikes swearing).</li>
-                                                    <li><strong>The Irishman Example:</strong> "I met the Irishman coming out of the toilet." Context clarifies who was exiting.</li>
+                                                <strong>Definition:</strong> Context is the single most important factor in Pragmatics. It determines whether an utterance is taken literally or implies something else. We can categorize context into four distinct types that work together to create meaning:<br/><br/>
+                                                <ul className="list-disc pl-5 mt-2 space-y-2">
+                                                    <li><strong>1. Physical Context:</strong> This is the location where the conversation happens. For example, the phrase "Bring that here" is meaningless unless you can see the physical location "here".</li>
+                                                    <li><strong>2. Epistemic Context:</strong> This is the shared background knowledge between speakers. If I say "Sootbucket is late again," you only understand because we both share the knowledge of who "Sootbucket" is.</li>
+                                                    <li><strong>3. Linguistic Context:</strong> This refers to what was said before or the tone used. Sarcasm often relies on this context (e.g., saying "Great job" in a flat tone after a mistake implies the opposite).</li>
+                                                    <li><strong>4. Social Context:</strong> This is about the relationship between speakers. You speak casually to your mum ("Hi mum"), but formally to your principal ("Good morning, Sir").</li>
                                                 </ul>
                                             </span>
                                         }
@@ -881,20 +881,20 @@
                                         answer={
                                             <ul className="space-y-4">
                                                 <li className="bg-slate-50 p-3 rounded-lg">
-                                                    <strong>a. Locutionary Acts:</strong> The basic, literal act of producing a meaningful linguistic expression.<br/>
-                                                    <em>Ex: Saying "It is cold." (Describing temperature).</em>
+                                                    <strong>a. Locutionary Acts:</strong> The basic act of simply saying the words. It is the literal dictionary meaning.<br/>
+                                                    <em>Ex: Saying "It is cold." (Just describing the temperature).</em>
                                                 </li>
                                                 <li className="bg-slate-50 p-3 rounded-lg">
-                                                    <strong>b. Illocutionary Acts:</strong> The communicative force or intention behind the utterance.<br/>
+                                                    <strong>b. Illocutionary Acts:</strong> The hidden intention or "Force" behind the words. What the speaker wants to achieve.<br/>
                                                     <em>Ex: Saying "It is cold" as a <strong>request</strong> for someone to close the window.</em>
                                                 </li>
                                                 <li className="bg-slate-50 p-3 rounded-lg">
-                                                    <strong>c. Perlocutionary Acts:</strong> The effect the utterance has on the listener's actions or thoughts.<br/>
-                                                    <em>Ex: The listener actually stands up and closes the window.</em>
+                                                    <strong>c. Perlocutionary Acts:</strong> The actual effect the words have on the listener.<br/>
+                                                    <em>Ex: The listener hears "It is cold", understands the request, and stands up to close the window.</em>
                                                 </li>
                                                 <li className="bg-slate-50 p-3 rounded-lg">
-                                                    <strong>d. The Cooperative Principle:</strong> Grice's theory that conversation is driven by cooperation towards a mutual goal, following 4 Maxims (Quantity, Quality, Relevance, Manner).<br/>
-                                                    <em>Ex: Answering "Where are you?" with "I'm at home" follows the principle.</em>
+                                                    <strong>d. The Cooperative Principle:</strong> Grice's idea that conversation isn't random; it's a cooperative effort where we follow unspoken rules (Maxims) to be understood.<br/>
+                                                    <em>Ex: If someone asks "Where are you?", answering "I'm at home" follows the principle. Answering "The moon is round" violates it.</em>
                                                 </li>
                                             </ul>
                                         }
@@ -907,35 +907,35 @@
 
                                     <QACard 
                                         question="1. What do we mean by truth-conditional semantics?"
-                                        answer="It is the approach that identifies the meaning of a sentence with the conditions under which the sentence would be true. To understand a sentence is to know what the world must be like for that sentence to be true. It works well for factual statements but struggles with context-dependent sentences (indexicals)."
+                                        answer="This is the theory that knowing the meaning of a sentence is the same as knowing the 'conditions' under which it would be true. Basically, a sentence is 'true' if it matches the facts of the real world. It works great for scientific facts but struggles with personal sentences (like 'I am here') which depend on context."
                                     />
                                     <QACard 
                                         question="2. What makes a sentence true? Differentiate between sentences with and without indexicals."
                                         answer={
                                             <span>
-                                                A sentence is true when the facts of the world match what the sentence says.
+                                                A sentence is true when the facts of the world match what is said.
                                                 <ul className="list-disc pl-5 mt-2 space-y-1">
-                                                    <li>For sentences <strong>without indexicals</strong> (e.g., historical facts like 'Letizia was Napoleon's mother'), truth depends only on historical reality.</li>
-                                                    <li>For sentences <strong>with indexicals</strong> (e.g., 'I am here'), truth depends on the <strong>context of utterance</strong> (who is speaking, when, and where).</li>
+                                                    <li><strong>Without Indexicals:</strong> Sentences like 'Letizia was Napoleon's mother' depend ONLY on history. They are always true or always false, no matter who says them.</li>
+                                                    <li><strong>With Indexicals:</strong> Sentences like 'I am here' depend entirely on the <strong>context of utterance</strong>. 'I am Napoleon's mother' is true ONLY if Letizia says it.</li>
                                                 </ul>
                                             </span>
                                         }
                                     />
                                     <QACard 
                                         question="3. Write short notes on the utterance-dependence of sentences."
-                                        answer="Some sentences cannot be judged as True or False unless we know details about the context in which they are spoken. These include sentences with indexical expressions like 'I', 'you', 'this', 'that', 'now'. For example, 'You are the mother of Napoleon' is true only if the addressee is actually Letizia. Thus, truth depends on elements like the identity of the speaker, the addressee, and the time."
+                                        answer="Some sentences cannot be judged as True or False just by looking at the words. These sentences contain 'Indexicals' (like I, you, now, here). Their truth depends on the specific utterance—who is speaking, when, and where. For example, 'I am hungry' is true for me right now, but might be false for you."
                                     />
                                     <QACard 
                                         question="4. Write down the logical techniques for indexicals."
-                                        answer="To handle indexicals, logical systems must be relativized to a context of utterance. Classical logic does not do this. For example, the inference 'I am 6ft tall' → 'I am 6ft tall' is only valid if both sentences are spoken by the same speaker. Logic must therefore incorporate contextual information to be valid."
+                                        answer="Standard logic fails with indexicals because it assumes words always mean the same thing. To handle indexicals, logic must be 'relativized' to context. For example, the logic 'I am tall, therefore I am tall' is only valid if the speaker 'I' stays the same person in both parts."
                                     />
                                     <QACard 
                                         question="5. What do we mean by proposition?"
-                                        answer="A proposition is understood as a function from possible worlds to truth values. It assigns 'true' to all the worlds where it correctly describes the situation, and 'false' to worlds where it does not. It is the abstract content of a statement that can be true or false."
+                                        answer="A proposition is the abstract 'idea' or content inside a sentence. It can be true in some worlds and false in others. Think of it as a function that checks possible worlds: it assigns 'true' to worlds where the description matches reality and 'false' where it doesn't."
                                     />
                                     <QACard 
                                         question="6. Differentiate between Reference and Inference."
-                                        answer="Reference is an act performed by the SPEAKER using words (names, pronouns) to identify something. Inference is an act performed by the LISTENER to deduce what the speaker is referring to based on context. (e.g., Speaker refers to 'The Cheese Sandwich', Listener infers it means 'The customer eating the sandwich')."
+                                        answer="Reference is what the SPEAKER does: choosing words (like names or pronouns) to identify something. Inference is what the LISTENER does: using those words + context to figure out who or what the speaker is talking about. (e.g., Speaker says 'The Cheese Sandwich', Listener infers 'The customer eating the sandwich')."
                                     />
                                 </Section>
 
