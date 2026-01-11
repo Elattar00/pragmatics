@@ -79,11 +79,11 @@
                 )}
                 <div className="p-6 bg-slate-50/30 space-y-4">
                     {dialog.map((line, i) => (
-                        <div key={i} className={`flex gap-4 ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'flex-row' : 'flex-row-reverse'}`}>
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                        <div key={i} className={`flex gap-4 ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'flex-row' : 'flex-row-reverse'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
                                 {line.speaker.charAt(0)}
                             </div>
-                            <div className={`py-3 px-5 text-sm shadow-sm max-w-[85%] leading-relaxed ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'bg-white text-slate-700 rounded-2xl rounded-tl-none border border-slate-100' : 'bg-indigo-600 text-white rounded-2xl rounded-tr-none'}`}>
+                            <div className={`py-3 px-5 text-sm shadow-sm max-w-[85%] leading-relaxed ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'bg-white text-slate-700 rounded-2xl rounded-tl-none border border-slate-100' : 'bg-indigo-600 text-white rounded-2xl rounded-tr-none'}`}>
                                 <div className="text-[10px] opacity-70 mb-1 uppercase tracking-wide font-bold">{line.speaker}</div>
                                 {line.text}
                             </div>
@@ -351,8 +351,40 @@
                                         <div className="mt-8">
                                             <h4 className="font-bold text-slate-700 mb-4">Case Study: Ray's Lateness</h4>
                                             <p className="text-sm text-slate-600 mb-4">Notice how Ray changes his language based on the context, even though the situation (being late) is the same.</p>
+                                            
+                                            <div className="space-y-6 mb-8">
+                                                <ChatExample 
+                                                    title="Scenario 1: Ray & Mum (Home)"
+                                                    dialog={[
+                                                        {speaker: "Ray", text: "Hi mum."},
+                                                        {speaker: "Mum", text: "Hi. You're late."},
+                                                        {speaker: "Ray", text: "Yeah, that bastard Sootbucket kept us in again."},
+                                                        {speaker: "Mum", text: "Nana's here."},
+                                                        {speaker: "Ray", text: "Oh sorry. Where is she?"}
+                                                    ]}
+                                                    analysis={
+                                                        <span>
+                                                            Ray uses casual, even rude language ("bastard Sootbucket") because the social context is familiar. Mum's response "Nana's here" is an <strong>indirect warning</strong> based on the epistemic context (they both know Nana dislikes bad language).
+                                                        </span>
+                                                    }
+                                                />
+                                                <ChatExample 
+                                                    title="Scenario 2: Ray & Principal (School)"
+                                                    dialog={[
+                                                        {speaker: "Ray", text: "Good afternoon, sir."},
+                                                        {speaker: "Principal", text: "What are you doing here at this time?"},
+                                                        {speaker: "Ray", text: "Mr. Sutton kept us in, sir."}
+                                                    ]}
+                                                    analysis={
+                                                        <span>
+                                                            Here, the context changes to 'School' (Physical) and 'Authority' (Social). Ray switches to formal language ("sir", "Mr. Sutton"), showing how context dictates language choice.
+                                                        </span>
+                                                    }
+                                                />
+                                            </div>
+
                                             <ComparisonTable 
-                                                title="Contextual Shift Analysis"
+                                                title="Contextual Shift Analysis Table"
                                                 leftTitle="Ray & Mum (Home)"
                                                 rightTitle="Ray & Principal (School)"
                                                 rows={[
@@ -404,12 +436,16 @@
                                             <div>
                                                 <h3 className="font-bold text-slate-800 text-xl mb-3">Inference</h3>
                                                 <p className="text-sm text-slate-600 mb-4">Inference is the act performed by the <strong>Listener</strong>. It is the process of deducing what the speaker means by a specific word.</p>
-                                                <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm space-y-2">
-                                                    <div>
-                                                        "Where's the <strong>spinach salad</strong> sitting?"
-                                                        <br/><span className="text-xs text-slate-400">Inference: 'Spinach salad' refers to the customer who ordered it.</span>
-                                                    </div>
-                                                    <div className="border-t border-slate-100 pt-2">
+                                                <div className="space-y-4">
+                                                    <ChatExample 
+                                                        title="Inference Example"
+                                                        dialog={[
+                                                            {speaker: "Waiter A", text: "Where's the spinach salad sitting?"},
+                                                            {speaker: "Waiter B", text: "He's sitting by the door."}
+                                                        ]}
+                                                        analysis="Listeners infer that 'spinach salad' refers to the customer who ordered it."
+                                                    />
+                                                    <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm mt-2">
                                                         "Can I look at your <strong>Chomsky</strong>?"
                                                         <br/><span className="text-xs text-slate-400">Inference: 'Chomsky' refers to the book written by Noam Chomsky.</span>
                                                     </div>
