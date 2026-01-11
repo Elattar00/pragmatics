@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pragmatics | Elattar</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Import Map -->
+    <script type="importmap">
+    {
+        "imports": {
+            "react": "https://esm.sh/react@18.2.0",
+            "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+            "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        }
+    }
+    </script>
+
+    <style>
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .hero-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import { createRoot } from 'react-dom/client';
+        import React, { useState, useEffect } from 'react';
+        import { 
+            MessageCircle, Brain, Ear, Mic, MapPin, Users, Clock, BookOpen, 
+            ArrowRight, Quote, Check, X, Search, Layers, Sparkles, 
+            MousePointer2, Fingerprint, FileText, Split, Lightbulb, 
+            HelpCircle, GraduationCap, Repeat, MessageSquare, Zap,
+            GitBranch, Anchor, Book, Globe, PenTool, AlertCircle, FileQuestion
+        } from 'lucide-react';
+
+        // --- UI Components ---
+
+        const ChatExample = ({ dialog, analysis, title, contextNote }) => (
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden my-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+                {title && (
+                    <div className="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
+                        <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">{title}</span>
+                        {contextNote && <span className="text-xs text-indigo-500 font-semibold">{contextNote}</span>}
+                    </div>
+                )}
+                <div className="p-6 bg-slate-50/30 space-y-4">
+                    {dialog.map((line, i) => (
+                        <div key={i} className={`flex gap-4 ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'flex-row' : 'flex-row-reverse'}`}>
+                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                                {line.speaker.charAt(0)}
+                            </div>
+                            <div className={`py-3 px-5 text-sm shadow-sm max-w-[85%] leading-relaxed ${['A', 'Wife', 'Ray', 'Speaker A', 'You'].includes(line.speaker) ? 'bg-white text-slate-700 rounded-2xl rounded-tl-none border border-slate-100' : 'bg-indigo-600 text-white rounded-2xl rounded-tr-none'}`}>
+                                <div className="text-[10px] opacity-70 mb-1 uppercase tracking-wide font-bold">{line.speaker}</div>
+                                {line.text}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {analysis && (
+                    <div className="bg-amber-50/60 p-5 border-t border-amber-100 flex gap-4">
+                        <div className="mt-1 text-amber-500 shrink-0"><Sparkles size={18} /></div>
+                        <div className="text-sm text-slate-700 space-y-2 leading-relaxed">
+                            <strong className="text-amber-800 block mb-1 text-xs uppercase tracking-wide">Analysis</strong>
+                            {analysis}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        const Section = ({ title, subtitle, icon: Icon, children, color = "indigo" }) => {
+            const styles = {
+                indigo: { header: "from-indigo-600 to-violet-600", text: "text-indigo-50", icon: "text-indigo-200" },
+                emerald: { header: "from-emerald-500 to-teal-600", text: "text-emerald-50", icon: "text-emerald-200" },
+                rose: { header: "from-rose-500 to-pink-600", text: "text-rose-50", icon: "text-rose-200" },
+                amber: { header: "from-amber-500 to-orange-600", text: "text-amber-50", icon: "text-amber-200" },
+                slate: { header: "from-slate-700 to-slate-800", text: "text-slate-50", icon: "text-slate-300" },
+            };
+            const s = styles[color];
+
+            return (
+                <div className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 overflow-hidden mb-12 border border-slate-100 relative group">
+                    <div className={`p-8 bg-gradient-to-br ${s.header} relative overflow-hidden`}>
+                        <div className={`absolute -right-10 -top-10 ${s.icon} opacity-10 rotate-12 transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110`}>
+                            <Icon size={180} />
+                        </div>
+                        <div className="relative z-10 flex items-start gap-5">
+                            <div className="p-3.5 bg-white/20 backdrop-blur-md rounded-2xl text-white shadow-inner shrink-0">
+                                <Icon size={32} />
+                            </div>
+                            <div>
+                                <h2 className="text-3xl font-black tracking-tight text-white mb-1">{title}</h2>
+                                {subtitle && <p className={`font-medium ${s.text} opacity-90`}>{subtitle}</p>}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-8 space-y-6 text-slate-600 leading-relaxed text-lg">
+                        {children}
+                    </div>
+                </div>
+            );
+        };
+
+        const ComparisonTable = ({ title, leftTitle, rightTitle, rows }) => (
+            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-sm my-6">
+                {title && <div className="bg-slate-100 px-4 py-2 text-xs font-bold uppercase text-slate-600 text-center tracking-wider">{title}</div>}
+                <div className="grid grid-cols-2 bg-slate-50 border-b border-slate-200 font-bold text-sm text-slate-700">
+                    <div className="p-3 text-center border-r border-slate-200">{leftTitle}</div>
+                    <div className="p-3 text-center">{rightTitle}</div>
+                </div>
+                {rows.map((row, i) => (
+                    <div key={i} className="grid grid-cols-2 text-sm border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+                        <div className="p-4 border-r border-slate-100 leading-relaxed">
+                            <span className="block text-[10px] font-bold text-indigo-400 uppercase mb-1">{row.label}</span>
+                            {row.left}
+                        </div>
+                        <div className="p-4 leading-relaxed">
+                            <span className="block text-[10px] font-bold text-emerald-400 uppercase mb-1">{row.label}</span>
+                            {row.right}
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+
+        const QACard = ({ question, answer, highlight }) => (
+            <div className={`bg-white border-l-4 ${highlight ? 'border-rose-500' : 'border-indigo-500'} shadow-sm rounded-r-xl p-6 my-6 hover:shadow-md transition-all group`}>
+                <h4 className="font-bold text-slate-900 mb-4 flex items-start gap-3 text-lg leading-snug group-hover:text-indigo-700 transition-colors">
+                    <HelpCircle className={`${highlight ? 'text-rose-500' : 'text-indigo-500'} shrink-0 mt-1`} size={20} />
+                    {question}
+                </h4>
+                <div className="text-slate-600 text-base leading-relaxed pl-8 border-l border-slate-100 ml-2.5">
+                    {answer}
+                </div>
+            </div>
+        );
+
+        // --- Main Application ---
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('intro');
+            const [scrollProgress, setScrollProgress] = useState(0);
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    const totalScroll = document.documentElement.scrollTop;
+                    const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scroll = `${totalScroll / windowHeight}`;
+                    setScrollProgress(Number(scroll));
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            return (
+                <div className="min-h-screen hero-pattern font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-24">
+                    
+                    <div className="fixed top-0 left-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-50 transition-all duration-100" style={{ width: `${scrollProgress * 100}%` }}></div>
+
+                    <header className="sticky top-0 z-40 glass-panel shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-indigo-600 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                                    <GraduationCap size={20} />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-black text-slate-800 tracking-tight">Pragmatics</h1>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Elattar</p>
+                                </div>
+                            </div>
+
+                            <nav className="flex p-1 bg-slate-200/50 rounded-full overflow-x-auto max-w-full no-scrollbar">
+                                {[
+                                    { id: 'intro', label: 'Intro & Map' },
+                                    { id: 'context', label: 'Context & Deixis' },
+                                    { id: 'logic', label: 'Logic & Truth' },
+                                    { id: 'conversation', label: 'Conversation' },
+                                    { id: 'speech', label: 'Speech Acts' },
+                                    { id: 'exams', label: 'Exams & Revision', highlight: true }
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 whitespace-nowrap flex items-center gap-2 ${
+                                            activeTab === tab.id 
+                                            ? 'bg-white text-indigo-600 shadow-sm ring-1 ring-black/5' 
+                                            : tab.highlight ? 'text-rose-600 hover:bg-rose-50' : 'text-slate-500 hover:text-slate-700'
+                                        }`}
+                                    >
+                                        {tab.highlight && <Sparkles size={12} />}
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
+                    </header>
+
+                    <main className="max-w-5xl mx-auto px-4 md:px-6 py-10">
+
+                        {/* TAB 1: INTRODUCTION */}
+                        {activeTab === 'intro' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <Section title="Linguistics & Meaning" subtitle="The Map of Language" icon={Layers} color="indigo">
+                                    
+                                    <p>
+                                        Linguistics is the scientific study of language, divided into several branches. We have the sound system (Phonology), the structure of words (Morphology), and the structure of sentences (Syntax). However, when it comes to <strong>meaning</strong>, we must look at two distinct but related fields: <strong>Semantics</strong> and <strong>Pragmatics</strong>.
+                                    </p>
+
+                                    <div className="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 mb-8 mt-4">
+                                        <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-wide mb-4 flex items-center gap-2">
+                                            <GitBranch size={16}/> The Structure of Linguistics
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                                            <div className="bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
+                                                <div className="text-xs font-bold text-slate-400 uppercase mb-1">Sound</div>
+                                                <div className="font-bold text-indigo-700">Phonology & Phonetics</div>
+                                            </div>
+                                            <div className="bg-white p-4 rounded-xl border border-indigo-50 shadow-sm">
+                                                <div className="text-xs font-bold text-slate-400 uppercase mb-1">Form</div>
+                                                <div className="font-bold text-indigo-700">Morphology & Syntax</div>
+                                            </div>
+                                            <div className="bg-indigo-600 p-4 rounded-xl shadow-md transform scale-105">
+                                                <div className="text-xs font-bold text-indigo-200 uppercase mb-1">Meaning</div>
+                                                <div className="font-bold text-white">Semantics & Pragmatics</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p>
+                                        In linguistics, we distinguish between two layers of meaning. First, we have the <strong>Lexical Meaning</strong>, which is the domain of Semantics. This is the straightforward, dictionary-based meaning of the words. For instance, if I say "I am happy," the semantic meaning is simply that I am experiencing the emotion of joy.
+                                    </p>
+                                    <p>
+                                        However, there is a second layer called the <strong>Underlying Meaning</strong>, which is the domain of Pragmatics. This deals with the hidden, implied, or intended meaning. It operates on the principle that <em>"what is meant is more than what is said."</em>
+                                    </p>
+
+                                    <div className="grid md:grid-cols-2 gap-6 my-8">
+                                        <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                                            <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4 text-lg">
+                                                <Book className="text-indigo-500" size={20}/> Semantic Perspective
+                                            </h3>
+                                            <p className="text-sm text-slate-600 mb-4">
+                                                Considers the literal meaning regardless of context.
+                                            </p>
+                                            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 italic text-sm">
+                                                <strong>Sign:</strong> "This shop sells babies and toddlers."<br/>
+                                                <strong>Meaning:</strong> The shop trades in human children.
+                                            </div>
+                                        </div>
+                                        <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm ring-2 ring-indigo-50">
+                                            <h3 className="font-bold text-slate-800 flex items-center gap-2 mb-4 text-lg">
+                                                <MessageCircle className="text-rose-500" size={20}/> Pragmatic Perspective
+                                            </h3>
+                                            <p className="text-sm text-slate-600 mb-4">
+                                                Considers the intended meaning based on context.
+                                            </p>
+                                            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-100 text-indigo-800 italic text-sm">
+                                                <strong>Sign:</strong> "This shop sells babies and toddlers."<br/>
+                                                <strong>Meaning:</strong> The shop sells clothes/items <em>for</em> babies.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p>
+                                        Pragmatics is essentially the study of how language is used in real-life contexts. It focuses on the relationship between language and the situation. Without pragmatics, human communication often fails because we rely heavily on context to fill in the gaps.
+                                    </p>
+
+                                    <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100 mt-6">
+                                        <h3 className="font-bold text-amber-900 mb-2 flex items-center gap-2"><Lightbulb size={18}/> Why do we need Pragmatics?</h3>
+                                        <p className="text-sm text-amber-800 mb-4">Consider this confusing exchange. Without context, the syntax is ambiguous:</p>
+                                        <ChatExample 
+                                            title="Example: The Irishman"
+                                            dialog={[
+                                                {speaker: "A", text: "I just met the old Irishman and his son coming out of the toilet."},
+                                                {speaker: "B", text: "I wouldn't have thought there was room for the two of them."},
+                                                {speaker: "A", text: "No silly, I mean I was coming out of the toilet. They were waiting."}
+                                            ]}
+                                            analysis={
+                                                <span>
+                                                    Syntactically, "coming out of the toilet" could describe the Irishman and his son. Speaker B took this <strong>Literal Meaning</strong> and was confused. Pragmatically, Speaker A meant that <em>he himself</em> was the one exiting. Context is required to fix the reference.
+                                                </span>
+                                            }
+                                        />
+                                    </div>
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* TAB 2: CONTEXT & DEIXIS */}
+                        {activeTab === 'context' && (
+                            <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+                                <Section title="Context, Deixis & Reference" subtitle="The Pillars of Pragmatics" icon={MapPin} color="emerald">
+                                    
+                                    <p>
+                                        Context is the single most important factor in Pragmatics. It determines whether an utterance is taken literally or implies something else. We can categorize context into four distinct types that work together to create meaning.
+                                    </p>
+
+                                    <div className="mb-12 mt-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                                                <strong className="text-emerald-700 block mb-2 text-lg">1. Physical Context</strong>
+                                                <p className="text-sm text-slate-600">This refers to the actual surroundings where the conversation takes place. For example, if we are in a library, the physical context dictates that we should be quiet. If someone speaks loudly, they are violating the context.</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                                                <strong className="text-emerald-700 block mb-2 text-lg">2. Epistemic Context</strong>
+                                                <p className="text-sm text-slate-600">This is the background knowledge shared by the speakers. It's what we "know" about the world. For instance, if I mention "Sootbucket," and you know who that is, we share an epistemic context.</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                                                <strong className="text-emerald-700 block mb-2 text-lg">3. Linguistic Context</strong>
+                                                <p className="text-sm text-slate-600">Also known as "Co-text," this refers to the words that have been said previously, as well as the tone of voice. Sarcasm is often detected through linguistic context (tone).</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-2xl border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                                                <strong className="text-emerald-700 block mb-2 text-lg">4. Social Context</strong>
+                                                <p className="text-sm text-slate-600">This involves the relationship between the speakers—power dynamics and intimacy. You speak differently to your mother (intimate) than to your school principal (formal/distant).</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="mt-8">
+                                            <h4 className="font-bold text-slate-700 mb-4">Case Study: Ray's Lateness</h4>
+                                            <p className="text-sm text-slate-600 mb-4">Notice how Ray changes his language based on the context, even though the situation (being late) is the same.</p>
+                                            <ComparisonTable 
+                                                title="Contextual Shift Analysis"
+                                                leftTitle="Ray & Mum (Home)"
+                                                rightTitle="Ray & Principal (School)"
+                                                rows={[
+                                                    {label: "Linguistic", left: "Ray uses rude language ('Bastard'). Mum responds with a warning ('Nana's here').", right: "Ray uses formal language ('Sir', 'Mr Sutton')."},
+                                                    {label: "Epistemic", left: "They both know who 'Sootbucket' (the teacher) is, and they know Nana dislikes bad language.", right: "They share knowledge of school rules and time."},
+                                                    {label: "Social", left: "Casual and familiar. However, the mention of Nana shifts the social expectation to be more polite.", right: "Formal and respectful due to the authority figure."},
+                                                ]}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-12 border-t border-slate-200 pt-8">
+                                        <h3 className="font-black text-slate-800 text-2xl mb-6 flex items-center gap-2"><MousePointer2 className="text-emerald-500"/> Deixis (Pointing)</h3>
+                                        <p className="mb-4 text-slate-600">
+                                            Deixis comes from the Greek word for "pointing". These are words that have no fixed meaning; their meaning depends entirely on the context of the utterance. Examples include "here", "there", "I", "you", "now", and "then".
+                                        </p>
+                                        
+                                        <div className="bg-slate-50 p-6 rounded-2xl">
+                                            <ul className="space-y-4">
+                                                <li className="flex flex-col md:flex-row gap-2 md:items-center">
+                                                    <span className="font-bold text-emerald-800 w-32 shrink-0">Person Deixis</span>
+                                                    <span className="text-sm text-slate-600">Words like <em>I, you, we, him</em>. "I" refers to whoever is currently speaking.</span>
+                                                </li>
+                                                <li className="flex flex-col md:flex-row gap-2 md:items-center">
+                                                    <span className="font-bold text-emerald-800 w-32 shrink-0">Temporal Deixis</span>
+                                                    <span className="text-sm text-slate-600">Words like <em>now, then, tomorrow</em>. "Now" refers to the specific moment of speaking.</span>
+                                                </li>
+                                                <li className="flex flex-col md:flex-row gap-2 md:items-center">
+                                                    <span className="font-bold text-emerald-800 w-32 shrink-0">Spatial Deixis</span>
+                                                    <span className="text-sm text-slate-600">Words like <em>here, there, this, that</em>. "Here" refers to the speaker's location.</span>
+                                                </li>
+                                            </ul>
+                                            <div className="mt-6 bg-white border border-slate-200 p-4 rounded-xl text-sm italic text-slate-500">
+                                                <strong>The "Free Beer" Paradox:</strong> A sign in a bar says "Free Beer Tomorrow". If you come back the next day, the sign still says "Tomorrow". The reference of the word "tomorrow" always moves one day ahead of the current "now", so it never becomes "today".
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-12 border-t border-slate-200 pt-8">
+                                        <div className="grid md:grid-cols-2 gap-8">
+                                            <div>
+                                                <h3 className="font-bold text-slate-800 text-xl mb-3">Reference</h3>
+                                                <p className="text-sm text-slate-600 mb-4">Reference is an act performed by the <strong>Speaker</strong>. Words themselves don't refer to things; people use words to refer. We can use proper names, nouns, or pronouns.</p>
+                                                <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm">
+                                                    <strong className="block text-indigo-600 mb-1">Example: Mr. Kawasaki</strong>
+                                                    A man is referred to as "Mr. Kawasaki" simply because he rides a loud Kawasaki motorcycle. The reference works because the listener can make the connection.
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-slate-800 text-xl mb-3">Inference</h3>
+                                                <p className="text-sm text-slate-600 mb-4">Inference is the act performed by the <strong>Listener</strong>. It is the process of deducing what the speaker means by a specific word.</p>
+                                                <div className="bg-white p-4 rounded-xl border border-slate-200 text-sm space-y-2">
+                                                    <div>
+                                                        "Where's the <strong>spinach salad</strong> sitting?"
+                                                        <br/><span className="text-xs text-slate-400">Inference: 'Spinach salad' refers to the customer who ordered it.</span>
+                                                    </div>
+                                                    <div className="border-t border-slate-100 pt-2">
+                                                        "Can I look at your <strong>Chomsky</strong>?"
+                                                        <br/><span className="text-xs text-slate-400">Inference: 'Chomsky' refers to the book written by Noam Chomsky.</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                                        <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2"><Repeat size={20}/> Anaphora</h3>
+                                        <p className="text-sm text-slate-600 mb-4">
+                                            Anaphora is the process of referring back to an entity that has already been introduced (the Antecedent). It helps avoid repetition.
+                                        </p>
+                                        
+                                        <div className="bg-white p-4 rounded-xl border border-slate-200 space-y-4">
+                                            <div className="flex items-center flex-wrap gap-2 text-sm">
+                                                <span className="bg-indigo-100 text-indigo-700 px-2 py-1 rounded font-bold">A boy</span>
+                                                <span className="text-slate-400 text-xs uppercase tracking-wide">Antecedent</span>
+                                                <ArrowRight size={14} className="text-slate-300"/>
+                                                <span className="text-slate-600 italic">washed a puppy.</span>
+                                                <span className="bg-rose-100 text-rose-700 px-2 py-1 rounded font-bold">He</span>
+                                                <span className="text-slate-400 text-xs uppercase tracking-wide">Anaphora</span>
+                                                <span className="text-slate-600 italic">got wet.</span>
+                                            </div>
+                                            <div className="text-xs text-slate-500 italic border-t border-slate-100 pt-2">
+                                                Sometimes the connection is inferred: "I caught a <strong>bus</strong> and asked <strong>the driver</strong>..." (We infer the driver is the bus driver).
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* TAB 3: LOGIC & MEANING */}
+                        {activeTab === 'logic' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <Section title="Logic & Meaning" subtitle="Truth, Presupposition & Entailment" icon={Fingerprint} color="indigo">
+                                    
+                                    <div className="mb-12">
+                                        <h3 className="font-black text-slate-800 text-2xl mb-4">Truth-Conditional Semantics</h3>
+                                        <p className="text-slate-600 mb-6 leading-relaxed">
+                                            This approach tries to identify the meaning of a sentence by looking at the conditions under which it would be true. A sentence is considered "true" if it matches the facts of the world. However, this gets complicated when we introduce <strong>indexicals</strong> (context-dependent words).
+                                        </p>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <div className="bg-slate-800 text-slate-300 p-6 rounded-2xl text-sm">
+                                                <strong className="text-white block mb-3 text-lg">Without Indexicals</strong>
+                                                <p className="mb-3 italic">"Letizia was the mother of Napoleon."</p>
+                                                <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                                                    <Check size={16}/> Historical Fact
+                                                </div>
+                                                <p className="mt-2 text-xs opacity-70 leading-relaxed">
+                                                    This sentence is true or false based solely on history. It doesn't matter who says it or when.
+                                                </p>
+                                            </div>
+                                            <div className="bg-slate-800 text-slate-300 p-6 rounded-2xl text-sm">
+                                                <strong className="text-white block mb-3 text-lg">With Indexicals</strong>
+                                                <p className="mb-3 italic">"I am the mother of Napoleon."</p>
+                                                <div className="flex items-center gap-2 text-rose-400 font-bold">
+                                                    <X size={16}/> Context Dependent
+                                                </div>
+                                                <p className="mt-2 text-xs opacity-70 leading-relaxed">
+                                                    Is this true? It depends! If Letizia says it, it's true. If I say it, it's false. Classical logic struggles with this because it requires context.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-12 border-t border-slate-200 pt-8">
+                                        <h3 className="font-black text-slate-800 text-2xl mb-4">Presupposition</h3>
+                                        <p className="text-slate-600 mb-6 leading-relaxed">
+                                            A presupposition is an assumption that the speaker takes for granted. It is background information that is assumed to be true. The most important test for presupposition is that it <strong>survives negation</strong>. Even if you say the sentence is false, the presupposition remains true.
+                                        </p>
+                                        
+                                        <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                                            <h4 className="font-bold text-slate-700 mb-4 uppercase tracking-wide text-xs">The 5 Types of Presupposition</h4>
+                                            <div className="space-y-3">
+                                                {[
+                                                    {type: "Existential", ex: "The King of France is bald.", pre: "There implies there is a King of France."},
+                                                    {type: "Factive", ex: "She realized the door was open.", pre: "Uses verbs like 'know' or 'realize'. Presupposes the fact is true (The door was open)."},
+                                                    {type: "Lexical", ex: "He stopped smoking.", pre: "Implies he used to smoke."},
+                                                    {type: "Structural", ex: "When did you start?", pre: "Wh- questions presuppose the event happened (You started)."},
+                                                    {type: "Counterfactual", ex: "If I had wings...", pre: "Implies the opposite is true (I do not have wings)."}
+                                                ].map((item, i) => (
+                                                    <div key={i} className="flex flex-col md:flex-row md:items-start justify-between text-sm bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
+                                                        <span className="font-bold text-indigo-700 w-32 shrink-0">{item.type}</span>
+                                                        <div className="flex-1">
+                                                            <span className="text-slate-800 italic block mb-1">"{item.ex}"</span>
+                                                            <span className="text-xs text-slate-500 block leading-relaxed">{item.pre}</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h3 className="font-black text-slate-800 text-2xl mb-4">Entailment</h3>
+                                        <p className="text-slate-600 mb-4 leading-relaxed">
+                                            Entailment is a purely logical relationship. If Sentence A is true, then Sentence B <strong>MUST</strong> be true. Unlike presupposition, entailment does <strong>not</strong> survive negation. If you negate the first sentence, the entailment is no longer guaranteed.
+                                        </p>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <div className="bg-emerald-50 p-6 rounded-xl border border-emerald-100">
+                                                <strong className="text-emerald-800 block mb-2">Example of Entailment</strong>
+                                                <div className="text-sm text-emerald-900 space-y-2">
+                                                    <p>A: "Ali killed the snake."</p>
+                                                    <p>B: "The snake is dead."</p>
+                                                    <p className="text-xs opacity-75 mt-2 pt-2 border-t border-emerald-200">
+                                                        If A is true, B cannot be false. Killing implies death.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="bg-rose-50 p-6 rounded-xl border border-rose-100">
+                                                <strong className="text-rose-800 block mb-2">Non-Entailment</strong>
+                                                <div className="text-sm text-rose-900 space-y-2">
+                                                    <p>A: "Fatma is a doctor."</p>
+                                                    <p>B: "Fatma is rich."</p>
+                                                    <p className="text-xs opacity-75 mt-2 pt-2 border-t border-rose-200">
+                                                        Being a doctor does not logically guarantee being rich. A does not entail B.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* TAB 4: CONVERSATIONAL LOGIC */}
+                        {activeTab === 'conversation' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <Section title="Conversational Logic" subtitle="Grice's Cooperative Principle" icon={Brain} color="amber">
+                                    
+                                    <p>
+                                        H. Paul Grice proposed that conversation is not random. It is guided by a general principle of cooperation. Speakers intend to be understood, and listeners assume speakers are being cooperative. To achieve this, Grice outlined four specific "Maxims" or rules that we generally follow.
+                                    </p>
+
+                                    <div className="mb-10 mt-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                                <div className="text-amber-500 font-bold text-xl mb-1">1. Maxim of Quantity</div>
+                                                <p className="text-sm text-slate-600">Make your contribution as informative as is required. Do not say too little, and do not say too much. (Be informative).</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                                <div className="text-amber-500 font-bold text-xl mb-1">2. Maxim of Quality</div>
+                                                <p className="text-sm text-slate-600">Do not say what you believe to be false. Do not say that for which you lack adequate evidence. (Be truthful).</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                                <div className="text-amber-500 font-bold text-xl mb-1">3. Maxim of Relevance</div>
+                                                <p className="text-sm text-slate-600">Be relevant to the current topic of conversation. (Stick to the point).</p>
+                                            </div>
+                                            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                                                <div className="text-amber-500 font-bold text-xl mb-1">4. Maxim of Manner</div>
+                                                <p className="text-sm text-slate-600">Avoid obscurity of expression. Avoid ambiguity. Be brief and orderly. (Be clear).</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-10 border-t border-slate-200 pt-8">
+                                        <h3 className="font-black text-slate-800 text-2xl mb-4 flex items-center gap-2"><Sparkles className="text-amber-500"/> Implicature</h3>
+                                        <p className="text-slate-600 mb-6 leading-relaxed">
+                                            When a speaker intentionally breaks (or "flouts") one of these maxims, they are not being uncooperative. Instead, they are signaling a hidden meaning called an <strong>Implicature</strong>. The listener must infer this meaning to make sense of the utterance.
+                                        </p>
+                                        
+                                        <div className="space-y-6">
+                                            <ChatExample 
+                                                title="Violating Relevance"
+                                                dialog={[
+                                                    {speaker: "A", text: "Where is my box of chocolates?"},
+                                                    {speaker: "B", text: "I can't find mine either."}
+                                                ]}
+                                                analysis={
+                                                    <span>
+                                                        Speaker B does not answer the question (violating Relevance). However, by saying they can't find theirs either, they imply that something happened to <em>both</em> boxes—perhaps someone stole them or moved them.
+                                                    </span>
+                                                }
+                                            />
+                                            
+                                            <ChatExample 
+                                                title="Violating Quantity/Manner"
+                                                dialog={[
+                                                    {speaker: "A", text: "How was the food?"},
+                                                    {speaker: "B", text: "Let's just say I won't be eating there again."}
+                                                ]}
+                                                analysis={
+                                                    <span>
+                                                        Speaker B avoids giving a direct description (violating Quantity). The implication is clear: the food was terrible, but they are being polite or dramatic about it.
+                                                    </span>
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="grid md:grid-cols-2 gap-6 mt-6">
+                                            <div className="bg-indigo-50 p-5 rounded-xl border border-indigo-100">
+                                                <strong className="text-indigo-900 block mb-2">Conventional Implicature</strong>
+                                                <p className="text-sm text-indigo-800 mb-2">Meaning tied to specific words like "but" or "yet", regardless of context.</p>
+                                                <div className="text-xs bg-white p-3 rounded italic border border-indigo-100">
+                                                    "She is poor <strong>but</strong> honest." <br/>
+                                                    (Implies a contrast: poor people are usually expected not to be honest).
+                                                </div>
+                                            </div>
+                                            <div className="bg-rose-50 p-5 rounded-xl border border-rose-100">
+                                                <strong className="text-rose-900 block mb-2">Conversational Implicature</strong>
+                                                <p className="text-sm text-rose-800 mb-2">Meaning inferred from the specific context and the maxims.</p>
+                                                <div className="text-xs bg-white p-3 rounded italic border border-rose-100">
+                                                    A: "Are you coming to the party?" <br/>
+                                                    B: "I have to work." (Implies: No).
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* TAB 5: SPEECH ACTS */}
+                        {activeTab === 'speech' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <Section title="Speech Act Theory" subtitle="Language as Action (Austin & Searle)" icon={Mic} color="rose">
+                                    <p className="text-lg mb-8 text-slate-600 leading-relaxed">
+                                        Before the 1960s, philosophers thought language was mainly used to describe reality (stating facts as True or False). <strong>J.L. Austin</strong> revolutionized this by arguing that <strong>"Saying is Doing"</strong>. When we speak, we perform actions—like promising, warning, or sentencing.
+                                    </p>
+
+                                    <div className="grid md:grid-cols-3 gap-4 mb-12">
+                                        <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden group hover:border-rose-300 transition-colors">
+                                            <div className="absolute top-0 right-0 p-3 bg-rose-50 text-rose-300"><MessageSquare size={32}/></div>
+                                            <strong className="text-rose-600 block mb-2 text-lg">1. Locutionary Act</strong>
+                                            <p className="text-xs text-slate-600 leading-relaxed">This is the literal, physical act of producing words. It is the dictionary meaning of the utterance.</p>
+                                            <div className="mt-4 text-xs font-mono bg-slate-50 p-3 rounded text-slate-600">"It's cold in here." (Statement of temperature).</div>
+                                        </div>
+                                        <div className="bg-white p-6 rounded-2xl border-2 border-rose-200 shadow-md relative overflow-hidden transform md:-translate-y-2">
+                                            <div className="absolute top-0 right-0 p-3 bg-rose-50 text-rose-500"><Zap size={32}/></div>
+                                            <strong className="text-rose-700 block mb-2 text-lg">2. Illocutionary Act</strong>
+                                            <p className="text-xs text-slate-600 leading-relaxed">This is the <strong>Force</strong> or intention behind the words. What is the speaker trying to achieve?</p>
+                                            <div className="mt-4 text-xs font-mono bg-rose-50 p-3 rounded text-rose-800">Intention: A request to close the window.</div>
+                                        </div>
+                                        <div className="bg-white p-6 rounded-2xl border border-rose-100 shadow-sm relative overflow-hidden group hover:border-rose-300 transition-colors">
+                                            <div className="absolute top-0 right-0 p-3 bg-rose-50 text-rose-300"><Users size={32}/></div>
+                                            <strong className="text-rose-600 block mb-2 text-lg">3. Perlocutionary Act</strong>
+                                            <p className="text-xs text-slate-600 leading-relaxed">This is the <strong>Effect</strong> the utterance has on the listener. The outcome.</p>
+                                            <div className="mt-4 text-xs font-mono bg-slate-50 p-3 rounded text-slate-600">Effect: The listener stands up and closes the window.</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                                        <h3 className="font-black text-slate-800 text-xl mb-4">Searle's 5 Classifications</h3>
+                                        <p className="text-sm text-slate-600 mb-6">John Searle classified all illocutionary acts into five basic categories:</p>
+                                        <div className="space-y-3">
+                                            {[
+                                                {name: "Representatives", desc: "The speaker states what they believe to be true (Asserting, Claiming).", ex: "The Earth is round."},
+                                                {name: "Directives", desc: "The speaker attempts to get the listener to do something (Ordering, Begging).", ex: "Close the door."},
+                                                {name: "Commissives", desc: "The speaker commits to a future course of action (Promising, Vowing).", ex: "I promise I will be there."},
+                                                {name: "Expressives", desc: "The speaker expresses a psychological state (Thanking, Apologizing).", ex: "I am sorry for your loss."},
+                                                {name: "Declarations", desc: "The speaker changes the world immediately by speaking (Marrying, Firing).", ex: "You are fired."}
+                                            ].map((act, i) => (
+                                                <div key={i} className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 bg-white p-4 rounded-xl border border-slate-100 shadow-sm hover:border-rose-200 transition-colors">
+                                                    <div className="font-bold text-rose-600 w-36 shrink-0">{act.name}</div>
+                                                    <div className="text-xs text-slate-500 flex-1 leading-relaxed">{act.desc}</div>
+                                                    <div className="text-xs font-mono bg-rose-50 text-rose-800 px-3 py-1 rounded w-fit whitespace-nowrap">{act.ex}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-8 bg-slate-800 text-slate-300 p-6 rounded-2xl">
+                                        <h4 className="font-bold text-white mb-2">Indirect Speech Acts</h4>
+                                        <p className="text-sm mb-3 leading-relaxed">
+                                            Sometimes, what we say (Locution) doesn't match what we mean (Illocution). This is an Indirect Speech Act.
+                                        </p>
+                                        <div className="grid md:grid-cols-2 gap-4 text-xs">
+                                            <div className="bg-white/10 p-4 rounded-lg">
+                                                <strong className="block text-rose-300 mb-1 text-sm">Direct Act</strong>
+                                                "Pass the salt."<br/>
+                                                <span className="opacity-70">Syntactic Form: Imperative</span><br/>
+                                                <span className="opacity-70">Function: Command</span><br/>
+                                                (Form matches Function)
+                                            </div>
+                                            <div className="bg-white/10 p-4 rounded-lg border border-rose-400/30">
+                                                <strong className="block text-emerald-300 mb-1 text-sm">Indirect Act</strong>
+                                                "Can you pass the salt?"<br/>
+                                                <span className="opacity-70">Syntactic Form: Interrogative (Question)</span><br/>
+                                                <span className="opacity-70">Function: Command/Request</span><br/>
+                                                (Form does NOT match Function)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Section>
+                            </div>
+                        )}
+
+                        {/* TAB 6: EXAM & REVISION */}
+                        {activeTab === 'exams' && (
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                
+                                {/* PART 1: 2025 EXAM */}
+                                <Section title="Last Year's Exam (2024/2025)" subtitle="Model Answers for Revision" icon={FileQuestion} color="slate">
+                                    <div className="bg-slate-800 text-slate-200 p-6 rounded-2xl mb-12 shadow-lg relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-4 opacity-10"><PenTool size={120} /></div>
+                                        <h3 className="text-xl font-bold text-white mb-2 relative z-10">Exam Information</h3>
+                                        <div className="text-sm space-y-1 relative z-10 opacity-90">
+                                            <p><strong>Subject:</strong> Applied Linguistics / Pragmatics</p>
+                                            <p><strong>Date:</strong> Tuesday 14-1-2025</p>
+                                            <p><strong>Level:</strong> 4th Year</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Question 1 */}
+                                    <QACard 
+                                        highlight={true}
+                                        question="1. Discuss the role of presupposition in pragmatics, illustrating how it affects the interpretation of meaning. Provide examples."
+                                        answer={
+                                            <span>
+                                                <strong>Definition:</strong> Presupposition refers to the background assumptions that a speaker takes for granted when making an utterance. It is information assumed to be true by both speaker and listener.<br/><br/>
+                                                <strong>Role & Effect:</strong> Its primary role is efficiency in communication. It allows speakers to convey information without explicitly asserting it. Crucially, presupposition <strong>survives negation</strong> (The "Constancy under Negation" test). If the presupposition is false, communication may suffer "Presupposition Failure".<br/><br/>
+                                                <strong>Examples:</strong>
+                                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                                    <li><em>Existential:</em> "The King of France is bald." (Presupposes a King exists).</li>
+                                                    <li><em>Factive:</em> "She realized the door was open." (Presupposes the door was open).</li>
+                                                </ul>
+                                            </span>
+                                        }
+                                    />
+
+                                    {/* Question 2 */}
+                                    <QACard 
+                                        highlight={true}
+                                        question="2. What is meant by Linguistic Entailments? Provide examples."
+                                        answer={
+                                            <span>
+                                                <strong>Definition:</strong> Linguistic Entailment is a logical relationship between two sentences where the truth of the first sentence guarantees the truth of the second. Unlike presupposition, entailment is purely logical and does <strong>not</strong> survive negation.<br/><br/>
+                                                <strong>Examples:</strong>
+                                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                                    <li><strong>Statement A:</strong> "Ali killed the snake."</li>
+                                                    <li><strong>Statement B:</strong> "The snake is dead."</li>
+                                                </ul>
+                                                <br/>
+                                                If A is true, B must be true (Killing entails death). However, if we negate A ("Ali did NOT kill the snake"), B is not necessarily true (The snake might still be alive).
+                                            </span>
+                                        }
+                                    />
+
+                                    {/* Question 3 */}
+                                    <QACard 
+                                        highlight={true}
+                                        question="3. In Pragmatics, context plays a crucial rule in interpreting an utterance; discuss this statement and support your answer with examples."
+                                        answer={
+                                            <span>
+                                                <strong>Discussion:</strong> This statement defines the core of Pragmatics. While Semantics looks at literal meaning, Pragmatics interprets "intended meaning", which is impossible without context. Context resolves ambiguity, assigns reference, and determines the force of speech acts.<br/><br/>
+                                                <strong>Examples:</strong>
+                                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                                    <li><strong>Physical Context:</strong> "Bring that here." cannot be understood without seeing where "here" is.</li>
+                                                    <li><strong>Social Context:</strong> A mother saying "Nana is here" to her son changes from a simple statement to a warning because of the social context (Nana dislikes swearing).</li>
+                                                    <li><strong>The Irishman Example:</strong> "I met the Irishman coming out of the toilet." Context clarifies who was exiting.</li>
+                                                </ul>
+                                            </span>
+                                        }
+                                    />
+
+                                    {/* Question 4 */}
+                                    <QACard 
+                                        highlight={true}
+                                        question="4. Define the following terms; supporting your answer with examples."
+                                        answer={
+                                            <ul className="space-y-4">
+                                                <li className="bg-slate-50 p-3 rounded-lg">
+                                                    <strong>a. Locutionary Acts:</strong> The basic, literal act of producing a meaningful linguistic expression.<br/>
+                                                    <em>Ex: Saying "It is cold." (Describing temperature).</em>
+                                                </li>
+                                                <li className="bg-slate-50 p-3 rounded-lg">
+                                                    <strong>b. Illocutionary Acts:</strong> The communicative force or intention behind the utterance.<br/>
+                                                    <em>Ex: Saying "It is cold" as a <strong>request</strong> for someone to close the window.</em>
+                                                </li>
+                                                <li className="bg-slate-50 p-3 rounded-lg">
+                                                    <strong>c. Perlocutionary Acts:</strong> The effect the utterance has on the listener's actions or thoughts.<br/>
+                                                    <em>Ex: The listener actually stands up and closes the window.</em>
+                                                </li>
+                                                <li className="bg-slate-50 p-3 rounded-lg">
+                                                    <strong>d. The Cooperative Principle:</strong> Grice's theory that conversation is driven by cooperation towards a mutual goal, following 4 Maxims (Quantity, Quality, Relevance, Manner).<br/>
+                                                    <em>Ex: Answering "Where are you?" with "I'm at home" follows the principle.</em>
+                                                </li>
+                                            </ul>
+                                        }
+                                    />
+                                </Section>
+
+                                {/* PART 2: EXPECTED QUESTIONS */}
+                                <Section title="Expected Questions Bank" subtitle="From Course Notes & Lectures" icon={BookOpen} color="indigo">
+                                    <p className="mb-6 text-slate-600">These questions cover key concepts found in your notes that were not in the 2025 exam.</p>
+
+                                    <QACard 
+                                        question="1. What do we mean by truth-conditional semantics?"
+                                        answer="It is the approach that identifies the meaning of a sentence with the conditions under which the sentence would be true. To understand a sentence is to know what the world must be like for that sentence to be true. It works well for factual statements but struggles with context-dependent sentences (indexicals)."
+                                    />
+                                    <QACard 
+                                        question="2. What makes a sentence true? Differentiate between sentences with and without indexicals."
+                                        answer={
+                                            <span>
+                                                A sentence is true when the facts of the world match what the sentence says.
+                                                <ul className="list-disc pl-5 mt-2 space-y-1">
+                                                    <li>For sentences <strong>without indexicals</strong> (e.g., historical facts like 'Letizia was Napoleon's mother'), truth depends only on historical reality.</li>
+                                                    <li>For sentences <strong>with indexicals</strong> (e.g., 'I am here'), truth depends on the <strong>context of utterance</strong> (who is speaking, when, and where).</li>
+                                                </ul>
+                                            </span>
+                                        }
+                                    />
+                                    <QACard 
+                                        question="3. Write short notes on the utterance-dependence of sentences."
+                                        answer="Some sentences cannot be judged as True or False unless we know details about the context in which they are spoken. These include sentences with indexical expressions like 'I', 'you', 'this', 'that', 'now'. For example, 'You are the mother of Napoleon' is true only if the addressee is actually Letizia. Thus, truth depends on elements like the identity of the speaker, the addressee, and the time."
+                                    />
+                                    <QACard 
+                                        question="4. Write down the logical techniques for indexicals."
+                                        answer="To handle indexicals, logical systems must be relativized to a context of utterance. Classical logic does not do this. For example, the inference 'I am 6ft tall' → 'I am 6ft tall' is only valid if both sentences are spoken by the same speaker. Logic must therefore incorporate contextual information to be valid."
+                                    />
+                                    <QACard 
+                                        question="5. What do we mean by proposition?"
+                                        answer="A proposition is understood as a function from possible worlds to truth values. It assigns 'true' to all the worlds where it correctly describes the situation, and 'false' to worlds where it does not. It is the abstract content of a statement that can be true or false."
+                                    />
+                                    <QACard 
+                                        question="6. Differentiate between Reference and Inference."
+                                        answer="Reference is an act performed by the SPEAKER using words (names, pronouns) to identify something. Inference is an act performed by the LISTENER to deduce what the speaker is referring to based on context. (e.g., Speaker refers to 'The Cheese Sandwich', Listener infers it means 'The customer eating the sandwich')."
+                                    />
+                                </Section>
+
+                            </div>
+                        )}
+
+                    </main>
+                </div>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
