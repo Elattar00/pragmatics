@@ -64,43 +64,96 @@
             ArrowRight, Quote, Check, X, Search, Layers, Sparkles, 
             MousePointer2, Fingerprint, FileText, Split, Lightbulb, 
             HelpCircle, GraduationCap, Repeat, MessageSquare, Zap,
-            GitBranch, Anchor, Book, Globe, PenTool, AlertCircle, FileQuestion
+            GitBranch, Anchor, Book, Globe, PenTool, AlertCircle, FileQuestion,
+            Home, Building2, UtensilsCrossed
         } from 'lucide-react';
 
         // --- UI Components ---
 
-        const ChatExample = ({ dialog, analysis, title, contextNote }) => (
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden my-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                {title && (
-                    <div className="bg-slate-50 px-5 py-3 border-b border-slate-100 flex justify-between items-center">
-                        <span className="text-xs font-bold uppercase text-slate-500 tracking-wider">{title}</span>
-                        {contextNote && <span className="text-xs text-indigo-500 font-semibold">{contextNote}</span>}
+        const ChatExample = ({ dialog, analysis, title, contextNote, setting = 'default' }) => {
+            const themes = {
+                home: { 
+                    bg: "bg-orange-50/50", 
+                    border: "border-orange-200", 
+                    header: "bg-orange-100/80 text-orange-900",
+                    icon: <Home size={16} />,
+                    accent: "bg-orange-200 text-orange-800"
+                },
+                school: { 
+                    bg: "bg-slate-100/50", 
+                    border: "border-slate-300", 
+                    header: "bg-slate-200/80 text-slate-800",
+                    icon: <Building2 size={16} />,
+                    accent: "bg-slate-300 text-slate-900"
+                },
+                restaurant: { 
+                    bg: "bg-emerald-50/50", 
+                    border: "border-emerald-200", 
+                    header: "bg-emerald-100/80 text-emerald-900",
+                    icon: <UtensilsCrossed size={16} />,
+                    accent: "bg-emerald-200 text-emerald-800"
+                },
+                default: { 
+                    bg: "bg-white", 
+                    border: "border-slate-200", 
+                    header: "bg-slate-50 text-slate-600",
+                    icon: <MessageCircle size={16} />,
+                    accent: "bg-slate-200 text-slate-700"
+                }
+            };
+
+            const t = themes[setting] || themes.default;
+
+            return (
+                <div className={`rounded-xl border ${t.border} overflow-hidden my-8 shadow-sm hover:shadow-md transition-shadow duration-300 bg-white`}>
+                    {/* Header */}
+                    <div className={`${t.header} px-5 py-3 border-b ${t.border} flex justify-between items-center`}>
+                        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                            {t.icon}
+                            <span>{title}</span>
+                        </div>
+                        {contextNote && <span className="text-[10px] font-bold bg-white/60 px-2 py-1 rounded-full border border-black/5">{contextNote}</span>}
                     </div>
-                )}
-                <div className="p-6 bg-slate-50/30 space-y-4">
-                    {dialog.map((line, i) => (
-                        <div key={i} className={`flex gap-4 ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'flex-row' : 'flex-row-reverse'}`}>
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold shrink-0 shadow-sm ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
-                                {line.speaker.charAt(0)}
+
+                    {/* Script Body */}
+                    <div className={`p-6 ${t.bg} space-y-5`}>
+                        {dialog.map((line, i) => (
+                            <div key={i} className="flex gap-4 items-start group">
+                                {/* Avatar */}
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold shrink-0 shadow-sm border border-white/50 ${
+                                    ['Mum', 'Principal', 'Waiter B', 'B'].includes(line.speaker) 
+                                    ? 'bg-slate-800 text-white' 
+                                    : 'bg-white text-slate-800'
+                                }`}>
+                                    {line.speaker.charAt(0)}
+                                </div>
+                                
+                                {/* Speech Box */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-baseline gap-2 mb-1">
+                                        <span className="text-[11px] font-bold uppercase tracking-wide opacity-60">{line.speaker}</span>
+                                    </div>
+                                    <div className={`relative p-3.5 rounded-2xl rounded-tl-none text-sm leading-relaxed shadow-sm border border-black/5 bg-white text-slate-700`}>
+                                        {line.text}
+                                    </div>
+                                </div>
                             </div>
-                            <div className={`py-3 px-5 text-sm shadow-sm max-w-[85%] leading-relaxed ${['A', 'Wife', 'Ray', 'Speaker A', 'You', 'Waiter A'].includes(line.speaker) ? 'bg-white text-slate-700 rounded-2xl rounded-tl-none border border-slate-100' : 'bg-indigo-600 text-white rounded-2xl rounded-tr-none'}`}>
-                                <div className="text-[10px] opacity-70 mb-1 uppercase tracking-wide font-bold">{line.speaker}</div>
-                                {line.text}
+                        ))}
+                    </div>
+
+                    {/* Analysis Footer */}
+                    {analysis && (
+                        <div className="bg-white p-5 border-t border-slate-100 flex gap-4">
+                            <div className="mt-1 text-amber-500 shrink-0"><Sparkles size={18} /></div>
+                            <div className="text-sm text-slate-700 space-y-1">
+                                <strong className="text-amber-800 block mb-1 text-xs uppercase tracking-wide">Pragmatic Analysis</strong>
+                                <div className="leading-relaxed">{analysis}</div>
                             </div>
                         </div>
-                    ))}
+                    )}
                 </div>
-                {analysis && (
-                    <div className="bg-amber-50/60 p-5 border-t border-amber-100 flex gap-4">
-                        <div className="mt-1 text-amber-500 shrink-0"><Sparkles size={18} /></div>
-                        <div className="text-sm text-slate-700 space-y-2 leading-relaxed">
-                            <strong className="text-amber-800 block mb-1 text-xs uppercase tracking-wide">Analysis</strong>
-                            {analysis}
-                        </div>
-                    </div>
-                )}
-            </div>
-        );
+            );
+        };
 
         const Section = ({ title, subtitle, icon: Icon, children, color = "indigo" }) => {
             const styles = {
@@ -303,6 +356,7 @@
                                         <p className="text-sm text-amber-800 mb-4">Consider this confusing exchange. Without context, the syntax is ambiguous:</p>
                                         <ChatExample 
                                             title="Example: The Irishman"
+                                            setting="default"
                                             dialog={[
                                                 {speaker: "A", text: "I just met the old Irishman and his son coming out of the toilet."},
                                                 {speaker: "B", text: "I wouldn't have thought there was room for the two of them."},
@@ -354,7 +408,8 @@
                                             
                                             <div className="space-y-6 mb-8">
                                                 <ChatExample 
-                                                    title="Scenario 1: Ray & Mum (Home)"
+                                                    title="Scenario 1: Home"
+                                                    setting="home"
                                                     dialog={[
                                                         {speaker: "Ray", text: "Hi mum."},
                                                         {speaker: "Mum", text: "Hi. You're late."},
@@ -369,7 +424,8 @@
                                                     }
                                                 />
                                                 <ChatExample 
-                                                    title="Scenario 2: Ray & Principal (School)"
+                                                    title="Scenario 2: Principal's Office"
+                                                    setting="school"
                                                     dialog={[
                                                         {speaker: "Ray", text: "Good afternoon, sir."},
                                                         {speaker: "Principal", text: "What are you doing here at this time?"},
@@ -438,7 +494,8 @@
                                                 <p className="text-sm text-slate-600 mb-4">Inference is the act performed by the <strong>Listener</strong>. It is the process of deducing what the speaker means by a specific word.</p>
                                                 <div className="space-y-4">
                                                     <ChatExample 
-                                                        title="Inference Example"
+                                                        title="The Spinach Salad"
+                                                        setting="restaurant"
                                                         dialog={[
                                                             {speaker: "Waiter A", text: "Where's the spinach salad sitting?"},
                                                             {speaker: "Waiter B", text: "He's sitting by the door."}
@@ -615,6 +672,7 @@
                                         <div className="space-y-6">
                                             <ChatExample 
                                                 title="Violating Relevance"
+                                                setting="default"
                                                 dialog={[
                                                     {speaker: "A", text: "Where is my box of chocolates?"},
                                                     {speaker: "B", text: "I can't find mine either."}
@@ -628,6 +686,7 @@
                                             
                                             <ChatExample 
                                                 title="Violating Quantity/Manner"
+                                                setting="default"
                                                 dialog={[
                                                     {speaker: "A", text: "How was the food?"},
                                                     {speaker: "B", text: "Let's just say I won't be eating there again."}
@@ -884,4 +943,3 @@
     </script>
 </body>
 </html>
-
